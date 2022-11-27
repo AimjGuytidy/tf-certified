@@ -75,7 +75,7 @@ test_padded = pad_sequences(test_sequence, padding=padding_style,
 
 model = keras.Sequential([
     Embedding(vocab_size, embedding_dim, input_length=max_length),
-    #GlobalAveragePooling1D(),
+    # GlobalAveragePooling1D(),
     Bidirectional(LSTM(64)),
     Flatten(),
     Dense(32, activation="relu"),
@@ -89,7 +89,24 @@ model.compile(loss="binary_crossentropy",
               optimizer="Adam",
               metrics=["accuracy"])
 
-num_epochs = 10
+num_epochs = 5
 
 history = model.fit(train_padded, train_label, epochs=num_epochs,
                     validation_data=(test_padded, test_label), verbose=2)
+
+
+# Plot utility
+def plot_graphs(history, string):
+    plt.plot(history.history[string])
+    plt.plot(history.history['val_' + string])
+    plt.xlabel("Epochs")
+    plt.ylabel(string)
+    plt.legend([string, 'val_' + string])
+    plt.show()
+
+
+# Plot the accuracy and loss
+plot_graphs(history, "accuracy")
+plot_graphs(history, "loss")
+
+# model.save("model_nlp.h5")
